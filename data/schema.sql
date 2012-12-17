@@ -1,17 +1,14 @@
--- DROP TABLE IF EXISTS series;
 CREATE TABLE IF NOT EXISTS series (
     id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
-    title TEXT NOT NULL
+    title TEXT UNIQUE
 );
 
--- DROP TABLE IF EXISTS languages;
 CREATE TABLE IF NOT EXISTS languages (
     id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
-    full_name TEXT,
-    short_code TEXT
+    full_name TEXT UNIQUE,
+    short_code TEXT UNIQUE
 );
 
--- DROP TABLE IF EXISTS updates;
 CREATE TABLE IF NOT EXISTS updates (
     id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
     series_id INTEGER REFERENCES series (id) ON DELETE CASCADE,
@@ -21,5 +18,6 @@ CREATE TABLE IF NOT EXISTS updates (
     rss_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     chapter TEXT,
     chapter_title TEXT,
+    link TEXT,
     data TEXT NOT NULL
 );

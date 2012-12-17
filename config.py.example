@@ -3,3 +3,4 @@
 DATABASE = '/tmp/splitter.db'
 DEBUG = False
 SECRET_KEY = 'CHANGE ME'
+BATOTO_FEED_URL = 'http://www.batoto.net/recent_rss'
