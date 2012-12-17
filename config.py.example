@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+DATABASE = '/tmp/splitter.db'
+DEBUG = False
+SECRET_KEY = 'CHANGE ME'
