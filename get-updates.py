@@ -42,7 +42,7 @@ class Updater(object):
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 (series_id, lang_id, self._get_entry_hash(entry), self._get_timestamp(entry.published_parsed),
                     data['chapter'], data['chapter_title'],
-                    entry['link'], ''), commit=False)
+                    entry['link'], ''))
 
     def _get_entry_hash(self, entry):
         return self._hash(entry.title, entry.guid,
@@ -65,7 +65,6 @@ class Updater(object):
         if self._feed is None:
             self._feed = feedparser.parse(self._feed_url)
         return self._feed
-
 
 if __name__ == '__main__':
     import sys
