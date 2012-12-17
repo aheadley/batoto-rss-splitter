@@ -26,7 +26,8 @@ class Updater(object):
         data = ((entry, self.PATTERN_DESC.match(entry.title).groupdict())
             for entry in self._get_feed().entries)
 
-        last_hash = db_query('SELECT rss_hash FROM updates ORDER BY creation_ts DESC LIMIT 1',single_result=True).get('rss_hash', None)
+        last_hash_result = db_query('SELECT rss_hash FROM updates ORDER BY creation_ts DESC LIMIT 1',single_result=True)
+        last_hash = last_hash_result['rss_hash'] if last_hash_result is not None else None
 
         for (entry, data) in self._iterate_feed(last_hash):
             db_query('INSERT OR IGNORE INTO series (title) VALUES (?)',

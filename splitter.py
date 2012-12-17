@@ -5,6 +5,7 @@ import xml.etree.cElementTree as ET
 
 from cStringIO import StringIO
 from contextlib import closing
+import time
 
 import flask
 
@@ -41,10 +42,7 @@ def noapp_db(func, *pargs, **kwargs):
     return result
 
 def noapp_db_query(*pargs, **kwargs):
-    with app.test_request_context():
-        app.preprocess_request()
-        result = db_query(*pargs, **kwargs)
-    return result
+    return noapp_db(db_query, *pargs, **kwargs)
 
 @app.before_request
 def before_request():
@@ -56,14 +54,14 @@ def teardown_request(dummy_arg=None):
 
 @app.route('/')
 def list_langs():
-    langs = db_query('SELECT id, full_name FROM languages')
+    langs = db_query('SELECT id, full_name FROM languages ORDER BY full_name')
     return '<br/>'.join('<a href="%s">%s</a>' % \
         (flask.url_for('list_series', language_id=lang['id']), lang['full_name']) \
             for lang in langs)
 
 @app.route('/series/<int:language_id>')
 def list_series(language_id):
-    series = db_query('SELECT * FROM series')
+    series = db_query('SELECT * FROM series ORDER BY title')
     return '<br/>'.join(
         '<a href="%s">%s</a>' % \
             (flask.url_for('series_feed', series_id=s['id'], language_id=language_id), \
@@ -80,7 +78,7 @@ def add_update_to_dom(dom, update, series, lang):
     item = ET.SubElement(dom, 'item')
     title = '%s - %s - %s: %s' % \
         (series, lang, update['chapter'], update['chapter_title'])
-    pub_date = update['rss_ts']
+    pub_date = time.strftime('%a, %d %b %Y %H:%M:%S +0000', time.strptime(update['rss_ts'], '%Y-%m-%d %H:%M:%S'))
     ET.SubElement(item, 'title').text = title
     ET.SubElement(item, 'link').text = update['link']
     ET.SubElement(item, 'guid').text = update['rss_hash']
