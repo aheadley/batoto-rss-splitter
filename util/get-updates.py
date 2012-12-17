@@ -2,6 +2,14 @@
 
 import feedparser
 import re
+from flask import g
+from splitter import app, db_connect, db_query as _db_query
+
+def db_query(*pargs, **kwargs):
+    with app.test_request_context():
+        app.preprocess_request()
+        result = _db_query(*pargs, **kwargs)
+    return result
 
 class Updater(object):
     """
@@ -17,8 +25,19 @@ class Updater(object):
         self._feed = None
 
     def update(self):
-        for entry in self._get_feed().entries:
-            print self.PATTERN_DESC.match(entry.title).groupdict()
+        data = [(entry, self.PATTERN_DESC.match(entry.title).groupdict())
+            for entry in self._get_feed().entries]
+
+        series = list(set(e[1]['series'] for e in data))
+        langs = list(set(e[1]['lang'] for e in data))
+        for s in series:
+            db_query('INSERT INTO series (title) VALUES (?)',
+                (s,))
+        for l in langs:
+            db_query('INSERT INTO languages (full_name, short_code) VALUES (?, ?)',
+                (l, l.lower()[:3]))
+        print db_query('SELECT * FROM series')
+
 
     def _get_feed(self):
         if self._feed is None:
