@@ -88,4 +88,7 @@ def series_feed(lang, series_id):
     return resp
 
 if __name__ == '__main__':
-    app.run()
+    if app.config['DEBUG']:
+        app.run()
+    else:
+        app.run(use_reloader=True, threaded=True)
