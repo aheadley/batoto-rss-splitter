@@ -55,6 +55,7 @@ def teardown_request(dummy_arg=None):
 @app.route('/')
 def list_langs():
     langs = db_query('SELECT * FROM languages ORDER BY full_name')
+    return flask.render_template('lang.html', langs=((lang, flask.url_for('list_series', lang=lang['short_code'])) for lang in langs))
     return '<br/>'.join('<a href="%s">%s</a>' % \
         (flask.url_for('list_series', lang=lang['short_code']), lang['full_name']) \
             for lang in langs)
@@ -62,6 +63,8 @@ def list_langs():
 @app.route('/series/<lang>/')
 def list_series(lang):
     series = db_query('SELECT * FROM series ORDER BY title')
+    return flask.render_template('series.html',
+        series=((s, flask.url_for('series_feed', series_id=s['id'], lang=lang)) for s in series))
     return '<br/>'.join(
         '<a href="%s">%s</a>' % \
             (flask.url_for('series_feed', series_id=s['id'], lang=lang), \

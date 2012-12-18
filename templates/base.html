@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+        <title>{% block head_title %}Index{% endblock %} - Batoto RSS Splitter</title>
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+        <div id="content">
+            {% block body_content %}
+            {% endblock %}
+        </div>
+        <div id="footer">
+            {% block body_footer %}
+            <div id="credits">
+                RSS Updates via <a href="http://www.batoto.net/">Batoto</a>
+                <br/>
+                Written by <a href="https://github.com/aheadley">aheadley</a>
+            </div>
+            <div id="copyright">
+                &copy; Copyright 2012 by <a href="http://waysaboutstuff.com/">Alex Headley</a>
+            </div>
+            {% endblock %}
+        </div>
+        {% endblock %}
+    </body>
+</html>

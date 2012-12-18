@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block head_title %}Series{% endblock %}
+
+{% block body_content %}
+<h1>Select a series:</h1>
+<ul>
+    {% for s, link in series %}
+    <li><a href="{{ link }}">{{ s['title']|escape }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

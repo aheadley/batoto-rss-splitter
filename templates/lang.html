@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block head_title %}Languages{% endblock %}
+
+{% block body_content %}
+<h1>Select a language:</h1>
+<ul>
+    {% for lang, link in langs %}
+    <li><a href="{{ link }}">{{ lang['full_name']|escape }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
