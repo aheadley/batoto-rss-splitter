@@ -54,23 +54,27 @@ def teardown_request(dummy_arg=None):
 
 @app.route('/')
 def list_langs():
-    langs = db_query('SELECT id, full_name FROM languages ORDER BY full_name')
+    langs = db_query('SELECT * FROM languages ORDER BY full_name')
     return '<br/>'.join('<a href="%s">%s</a>' % \
-        (flask.url_for('list_series', language_id=lang['id']), lang['full_name']) \
+        (flask.url_for('list_series', lang=lang['short_code']), lang['full_name']) \
             for lang in langs)
 
-@app.route('/series/<int:language_id>')
-def list_series(language_id):
+@app.route('/series/<lang>/')
+def list_series(lang):
     series = db_query('SELECT * FROM series ORDER BY title')
     return '<br/>'.join(
         '<a href="%s">%s</a>' % \
-            (flask.url_for('series_feed', series_id=s['id'], language_id=language_id), \
+            (flask.url_for('series_feed', series_id=s['id'], lang=lang), \
                 s['title']) for s in series)
 
-def load_xml_dom():
+def load_xml_dom(series_title):
     with app.open_resource('data/feed-template.xml') as rss_tpl:
-        rss_doc = rss_tpl.read() % (app.config['BATOTO_FEED_URL'],
-            app.config['BATOTO_FEED_URL'])
+        rss_doc = rss_tpl.read() % (
+            series_title,
+            app.config['BATOTO_FEED_URL'],
+            series_title,
+            app.config['BATOTO_FEED_URL']
+        )
         rss_dom = ET.fromstring(rss_doc)
     return rss_dom
 
@@ -85,15 +89,17 @@ def add_update_to_dom(dom, update, series, lang):
     ET.SubElement(item, 'pubDate').text = pub_date
     ET.SubElement(item, 'description').text = title
 
-@app.route('/feed/<int:series_id>/<int:language_id>')
-def series_feed(series_id, language_id):
+@app.route('/feed/<lang>/<int:series_id>')
+def series_feed(lang, series_id):
+    lang_id = db_query('SELECT id FROM languages WHERE short_code = ?',
+        (lang,), single_result=True)['id']
     updates = db_query('SELECT * FROM updates WHERE series_id = ? AND language_id = ? ORDER BY rss_ts DESC LIMIT 25',
-        (series_id, language_id))
+        (series_id, lang_id))
     series = db_query('SELECT title FROM series WHERE id = ?',
         (series_id,), single_result=True)['title']
     lang = db_query('SELECT full_name FROM languages WHERE id = ?',
-        (language_id,), single_result=True)['full_name']
-    root = load_xml_dom()
+        (lang_id,), single_result=True)['full_name']
+    root = load_xml_dom(series)
 
     for update in updates:
         add_update_to_dom(root[0], update, series, lang)

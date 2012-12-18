@@ -4,9 +4,9 @@
                     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
                   >
     <channel>
-        <title><![CDATA[Batoto Recent Updates RSS]]></title>
+        <title><![CDATA[%s Updates RSS]]></title>
         <link>%s</link>
-        <description><![CDATA[Latest updates from Batoto in RSS 2.0!]]></description>
+        <description><![CDATA[Latest updates for %s from Batoto in RSS 2.0!]]></description>
         <image>
             <title><![CDATA[Batoto Recent Updates RSS]]></title>
             <link>%s</link>

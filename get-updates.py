@@ -6,7 +6,7 @@ import time
 import hashlib
 import json
 import pickle
-from splitter import noapp_db_query as db_query
+from splitter import app, noapp_db_query as db_query
 #from splitter import noapp_db, db_query, db_commit
 
 class Updater(object):
@@ -30,14 +30,24 @@ class Updater(object):
         last_hash = last_hash_result['rss_hash'] if last_hash_result is not None else None
 
         for (entry, data) in self._iterate_feed(last_hash):
-            db_query('INSERT OR IGNORE INTO series (title) VALUES (?)',
-                (data['series'],))
-            db_query('INSERT OR IGNORE INTO languages (full_name, short_code) VALUES (?, ?)',
-                (data['lang'], data['lang'].lower()[:3]))
             series_id = db_query('SELECT id FROM series WHERE title = ?',
-                    (data['series'],), True)['id']
+                    (data['series'],), True)
+            if series_id is None:
+                db_query('INSERT INTO series (title) VALUES (?)',
+                    (data['series'],))
+                series_id = db_query('SELECT id FROM series WHERE title = ?',
+                            (data['series'],), True).get('id')
+            else:
+                series_id = series_id['id']
             lang_id = db_query('SELECT id FROM languages WHERE full_name = ?',
-                    (data['lang'],), True)['id']
+                    (data['lang'],), True)
+            if lang_id is None:
+                db_query('INSERT INTO languages (full_name, short_code) VALUES (?, ?)',
+                    (data['lang'], data['lang'].lower()[:3]))
+                lang_id = db_query('SELECT id FROM languages WHERE full_name = ?',
+                        (data['lang'],), True).get('id')
+            else:
+                lang_id = lang_id['id']
             db_query('INSERT OR IGNORE INTO updates \
                         (series_id, language_id, rss_hash, rss_ts, chapter, chapter_title, link, data) \
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -46,11 +56,11 @@ class Updater(object):
                     entry['link'], ''))
 
     def _get_entry_hash(self, entry):
-        return self._hash(entry.title, entry.guid,
-            self._get_timestamp(entry.published_parsed))
+        return self._hash(entry.title, entry.guid)
 
     def _hash(self, *args):
-        return hashlib.sha1((u'|'.join(args)).encode('utf-8')).hexdigest()
+        return hashlib.sha1(app.config['SECRET_KEY'] + ':' + \
+            (u'|'.join(args)).encode('utf-8')).hexdigest()
 
     def _get_timestamp(self, time_spec):
         return time.strftime('%Y-%m-%d %H:%M:%S', time_spec)
@@ -69,7 +79,6 @@ class Updater(object):
 
 if __name__ == '__main__':
     import sys
-    from splitter import app
 
     feed_url = app.config['BATOTO_FEED_URL']
     try:
