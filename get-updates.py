@@ -15,7 +15,7 @@ class Updater(object):
 
     PATTERN_DESC = re.compile(
         r'^(?P<series>.*) - (?P<lang>[A-Z][a-z]+) - '
-            '(?P<chapter>(?:Vol\.[\d.]+ )?Ch\.[\d.]+):? '
+            '(?P<chapter>(?:Vol\.[\d.]+ )?Ch\.(?:Part )?[\d.]+):? '
             '(?P<chapter_title>.*)$')
 
     def __init__(self, feed_url):
