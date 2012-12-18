@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+    >
+    <channel>
+        {% autoescape false %}
+        <title><![CDATA[{{ series_title }} Updates RSS]]></title>
+        <link>{{ config['BATOTO_FEED_URL'] }}</link>
+        <description><![CDATA[Latest updates for {{ series_title }} from Batoto in RSS 2.0!]]></description>
+        <image>
+            <title><![CDATA[Batoto Recent Updates RSS]]></title>
+            <link>{{ config['BATOTO_FEED_URL'] }}</link>
+            <url>http://www.batoto.net/forums/public/style_images/11_4_logo.png</url>
+        </image>
+        {% for update, update_title, pub_date in updates %}
+        <item>
+            <title><![CDATA[{{ update_title }}]]></title>
+            <link>{{ update['link'] }}</link>
+            <guid>{{ update['rss_hash'] }}</guid>
+            <pubDate>{{ pub_date }}</pubDate>
+            <description><![CDATA[{{ update_title }}]]></description>
+        </item>
+        {% endfor %}
+        {% endautoescape %}
+    </channel>
+</rss>
