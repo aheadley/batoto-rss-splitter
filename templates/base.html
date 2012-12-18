@@ -3,15 +3,22 @@
     <head>
         {% block head %}
         <title>{% block head_title %}Index{% endblock %} - Batoto RSS Splitter</title>
+        {% block head_style %}
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+        {% endblock %}
+        {% block head_script %}
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        {% endblock %}
         {% endblock %}
     </head>
     <body>
+        <div class="container">
         {% block body %}
         <div id="content">
             {% block body_content %}
             {% endblock %}
         </div>
-        <div id="footer">
+        <div id="footer" class="footer">
             {% block body_footer %}
             <div id="credits">
                 RSS Updates via <a href="http://www.batoto.net/">Batoto</a>
@@ -24,5 +31,6 @@
             {% endblock %}
         </div>
         {% endblock %}
+        </div>
     </body>
 </html>
