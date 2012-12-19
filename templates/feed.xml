@@ -5,7 +5,7 @@
     >
     <channel>
         {% autoescape false %}
-        <title><![CDATA[{{ series_title }} Updates RSS]]></title>
+        <title><![CDATA[{{ series_title }}]]></title>
         <link>{{ config['BATOTO_FEED_URL'] }}</link>
         <description><![CDATA[Latest updates for {{ series_title }} from Batoto in RSS 2.0!]]></description>
         <image>
