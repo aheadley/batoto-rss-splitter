@@ -97,5 +97,7 @@ if __name__ == '__main__':
             handler = logging.handlers.StreamHandler
         except AttributeError:
             handler = logging.StreamHandler
-        app.logger.addHandler(handler(level=logging.INFO))
+        handler = handler()
+        handler.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
         app.run(use_reloader=True, threaded=True)
