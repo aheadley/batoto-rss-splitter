@@ -72,7 +72,8 @@ def series_feed(lang, series_id):
         (series_id,), single_result=True)['title']
     lang = db_query('SELECT full_name FROM languages WHERE id = ?',
         (lang_id,), single_result=True)['full_name']
-
+    app.logger.debug('Generating feed for "%s" with %d entries',
+        series, len(updates))
     resp = flask.make_response(flask.render_template('feed.xml',
         updates=((
                 update,
@@ -91,4 +92,6 @@ if __name__ == '__main__':
     if app.config['DEBUG']:
         app.run()
     else:
+        import logging
+        app.logger.addHandler(logging.handlers.StreamHandler(level=logging.INFO))
         app.run(use_reloader=True, threaded=True)
