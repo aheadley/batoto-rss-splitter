@@ -93,5 +93,9 @@ if __name__ == '__main__':
         app.run()
     else:
         import logging
-        app.logger.addHandler(logging.handlers.StreamHandler(level=logging.INFO))
+        try:
+            handler = logging.handlers.StreamHandler
+        except AttributeError:
+            handler = logging.StreamHandler
+        app.logger.addHandler(handler(level=logging.INFO))
         app.run(use_reloader=True, threaded=True)
