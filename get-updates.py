@@ -34,6 +34,7 @@ class Updater(object):
             last_hash = last_hash_result['rss_hash'] if last_hash_result is not None else None
         app.logger.debug('Using last hash: %s', str(last_hash))
         for (entry, data) in self._iterate_feed(last_hash):
+            app.logger.debug('Checking entry: %s', data)
             series_id = db_query('SELECT id FROM series WHERE title = ?',
                     (data['series'],), True)
             if series_id is None:
@@ -80,7 +81,11 @@ class Updater(object):
             if last_hash is not None and self._get_entry_hash(entry) == last_hash:
                 break
             else:
-                yield entry, self.PATTERN_DESC.match(entry.title).groupdict()
+                match = self.PATTERN_DESC.search(entry.title)
+                if match:
+                    yield entry, match.groupdict()
+                else:
+                    app.logger.warning('Entry failed pattern check: %s', entry.title)
 
     def _get_feed(self):
         if self._feed is None:
