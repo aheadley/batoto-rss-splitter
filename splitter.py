@@ -5,11 +5,21 @@ import sqlite3
 from cStringIO import StringIO
 from contextlib import closing
 import time
+import logging
 
 import flask
 
 app = flask.Flask(__name__)
 app.config.from_envvar('SPLITTER_SETTINGS', silent=True)
+
+if not app.config['DEBUG']:
+    try:
+        handler = logging.handlers.StreamHandler
+    except AttributeError:
+        handler = logging.StreamHandler
+        handler = handler()
+        handler.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
 
 def db_connect():
     return sqlite3.connect(app.config['DATABASE'])
@@ -92,12 +102,4 @@ if __name__ == '__main__':
     if app.config['DEBUG']:
         app.run()
     else:
-        import logging
-        try:
-            handler = logging.handlers.StreamHandler
-        except AttributeError:
-            handler = logging.StreamHandler
-        handler = handler()
-        handler.setLevel(logging.INFO)
-        app.logger.addHandler(handler)
         app.run(use_reloader=True, threaded=True)
