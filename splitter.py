@@ -17,9 +17,9 @@ if not app.config['DEBUG']:
         handler = logging.handlers.StreamHandler
     except AttributeError:
         handler = logging.StreamHandler
-        handler = handler()
-        handler.setLevel(logging.INFO)
-        app.logger.addHandler(handler)
+    handler = handler()
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
 
 def db_connect():
     return sqlite3.connect(app.config['DATABASE'])
