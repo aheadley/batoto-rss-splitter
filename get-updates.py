@@ -16,8 +16,8 @@ class Updater(object):
 
     PATTERN_DESC = re.compile(
         r'^(?P<series>.*) - (?P<lang>[A-Z][a-z]+) - '
-            '(?P<chapter>(?:Vol\.[\d.]+ )?Ch\.[\d\w. ]+):? '
-            '(?P<chapter_title>.*)$')
+            '(?P<chapter>(?:Vol\.[\d.]+ )?Ch\.[\d\w.]+(?: \d+)?):? '
+            '(?P<chapter_title>.+)$')
 
     def __init__(self, app):
         self._feed_url = app.config['BATOTO_FEED_URL']
