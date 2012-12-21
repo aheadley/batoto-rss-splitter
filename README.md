@@ -5,9 +5,16 @@ Split Batoto updates RSS feed into per-series feeds.
 
 ## Usage
 
-There are two parts to this, the updater (``get-updates.py``) which should run
-as a cronjob and populates the database with series, languages, and rss updates,
-and the Flask app (``splitter.py``).
+The main script is ``splitter.py``, which can be run in different "modes":
+
+  - ``fetch-updates``: Pulls data into the database from the Batoto RSS feed,
+  should be run periodically (cronjob recommended). If run with ``--force`` it
+  will ignore the last update and re-check all visible updates in the feed
+  - ``run``: Runs the Flask app which displays the data from the database
+  - ``clean-db``: Removes updates from the database older than x days (default is
+  30, overridable as an arg to the command)
+  - ``create-db``: Imports the database schema, creating the database. If run with
+  ``--force`` it will drop the database first
 
 First, create the config file by copying ``config.py.example`` to ``<whatever>.py``
 and change and values as needed, then set the ``SPLITTER_SETTINGS`` env var to
@@ -18,16 +25,18 @@ $ export SPLITTER_SETTINGS=splitter_config.py
 
 Create the database:
 ~~~~
-$ python create-db.py
+$ python splitter.py -m create-db
 ~~~~
 
 Populate the database for the first time:
 ~~~~
-$ python get-updates.py
+$ python splitter.py -m fetch-updates
 ~~~~
 
-Then run set get-updates.py to run as cronjob, and run the ``splitter.py`` app,
-it should work via WSGI (haven't actually tested this) or you can just run the dev server:
+You should then make the fetch-updates command run as a cronjob so the database
+continues to get new updates. You can then run the Flask app (the default mode),
+it should work via WSGI (haven't actually tested this) or you can just run the
+dev server:
 ~~~~
 $ python splitter.py
  * Running on http://127.0.0.1:5000/
