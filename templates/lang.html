@@ -3,8 +3,8 @@
 {% block head_title %}Languages{% endblock %}
 
 {% block body_content %}
-<h1>Select a language:</h1>
-<ul>
+<h3>Select a language:</h3>
+<ul id="lang-list">
     {% for lang, link in langs %}
     <li><a href="{{ link }}">{{ lang['full_name']|escape }}</a></li>
     {% endfor %}
