@@ -52,8 +52,8 @@
 {% block body_content %}
 <h3>Select a series:</h3>
 <ul id="series-list">
-    {% for s, link in series %}
-    <li><a href="{{ link }}">{{ s['title']|escape }}</a></li>
+    {% for s in series %}
+    <li><a href="{{ url_for('series_feed', lang_code=lang, series_id=s['id']) }}">{{ s['title']|escape }}</a></li>
     {% endfor %}
 </ul>
 {% endblock %}
