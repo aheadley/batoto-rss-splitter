@@ -5,6 +5,7 @@
         <title>{% block head_title %}Index{% endblock %} - Batoto RSS Splitter</title>
         {% block head_style %}
         <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ url_for('static', filename='css/splitter.css') }}" rel="stylesheet" media="screen">
         {% endblock %}
         {% block head_script %}
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
@@ -16,27 +17,30 @@
         {% block body %}
         <div id="header" class="header">
             {% block body_header %}
-            <h1>Batoto RSS Splitter</h1>
-            <p>Splits Batoto's global RSS feed into feeds separated by language
-                and series.</p>
+            <div class="navbar navbar-inverse navbar-static-top">
+                <div class="navbar-inner">
+                    <span class="brand">Batoto RSS Splitter</span>
+                    <ul class="nav">
+                        <li><a href="{{ url_for('list_langs') }}">Home</a></li>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                    </ul>
+                </div>
+            </div>
             {% endblock %}
         </div>
-        <div id="content">
+        <div id="content" class="well">
             {% block body_content %}
             {% endblock %}
         </div>
+        <!-- <hr/> -->
         <div id="footer" class="footer">
             {% block body_footer %}
-            <div id="credits">
-                RSS Updates via <a href="http://www.batoto.net/">Batoto</a>
-                <br/>
-                Written by <a href="https://github.com/aheadley">aheadley</a>
-                <br/>
-                Source code on <a href="https://github.com/aheadley/batoto-rss-splitter">GitHub</a>
-            </div>
-            <div id="copyright">
-                &copy; Copyright 2012 by <a href="http://waysaboutstuff.com/">Alex Headley</a>
-            </div>
+            <ul id="credits-list" class="row">
+                <li class="span4 offset2">RSS Updates via <a href="http://www.batoto.net/">Batoto</a></li>
+                <li class="span4">Written by <a href="https://github.com/aheadley">aheadley</a></li>
+                <li class="span4 offset2">Source code on <a href="https://github.com/aheadley/batoto-rss-splitter">GitHub</a></li>
+                <li id="copyright" class="span4">&copy; Copyright 2012 by <a href="http://waysaboutstuff.com/">Alex Headley</a></li>
+            </ul>
             {% endblock %}
         </div>
         {% endblock %}

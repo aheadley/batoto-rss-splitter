@@ -61,6 +61,10 @@ def before_request():
 def teardown_request(dummy_arg=None):
     flask.g.db.close()
 
+@app.route('/about')
+def about():
+    return flask.render_template('about.html')
+
 @app.route('/')
 def list_langs():
     langs = db_query('SELECT * FROM languages ORDER BY full_name')

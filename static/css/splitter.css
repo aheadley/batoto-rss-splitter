@@ -1,0 +1,5 @@
+#series-list li,
+#lang-list li,
+#credits-list li {
+    list-style-type: none;
+}
