@@ -50,10 +50,11 @@
 {% endblock %}
 
 {% block body_content %}
+<h2>Language: {{ lang['full_name'] }}</h2>
 <h3>Select a series:</h3>
 <ul id="series-list">
     {% for s in series %}
-    <li><a href="{{ url_for('series_feed', lang_code=lang, series_id=s['id']) }}">{{ s['title']|escape }}</a></li>
+    <li><a href="{{ url_for('series_feed', lang_code=lang['short_code'], series_id=s['id']) }}">{{ s['title']|escape }}</a></li>
     {% endfor %}
 </ul>
 {% endblock %}

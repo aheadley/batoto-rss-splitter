@@ -273,10 +273,10 @@ def about():
 def list_langs():
     return flask.render_template('lang.html', langs=flask.g.db.get_all_langs())
 
-@app.route('/series/<lang>/')
-def list_series(lang):
+@app.route('/series/<lang_code>/')
+def list_series(lang_code):
     try:
-        lang_id = flask.g.db.get_lang(short_code=lang)
+        lang = flask.g.db.get_lang(short_code=lang_code)
     except DataNotFound:
         flask.abort(404)
     return flask.render_template('series.html',
