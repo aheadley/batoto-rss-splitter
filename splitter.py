@@ -30,6 +30,22 @@ class SqliteManager(object):
     def cursor(self):
         return self._conn.cursor()
 
+    @property
+    def last_insert_rowid(self):
+        result = self.query('SELECT last_insert_rowid()', single_result=True)
+        if result is None:
+            raise InvalidQuery()
+        else:
+            return result['last_insert_rowid()']
+
+    @property
+    def changes(self):
+        result = self.query('SELECT changes()', single_result=True)
+        if result is None:
+            raise InvalidQuery()
+        else:
+            return result['changes()']
+
     def close(self):
         self._conn.close()
 
@@ -140,25 +156,29 @@ class SplitterDataManager(object):
             (rss_hash,), commit=False, single_result=True)
 
     def add_series(self, title):
-        return self.db.query('INSERT INTO series (title) VALUES (?)',
-            (title,))
+        self.db.query('INSERT INTO series (title) VALUES (?)',
+            (title,), commit=True)
+        return self.db.last_insert_rowid
 
     def add_lang(self, full_name, short_code):
-        return self.db.query('INSERT INTO languages (full_name, short_code) VALUES (?, ?)',
-            (full_name, short_code))
+        self.db.query('INSERT INTO languages (full_name, short_code) VALUES (?, ?)',
+            (full_name, short_code), commit=True)
+        return self.db.last_insert_rowid
 
     def add_update(self, series_id, lang_id, rss_hash, rss_ts, chapter, chapter_title,
                     link, data):
-        return self.db.query('INSERT INTO updates \
+        self.db.query('INSERT INTO updates \
                     (series_id, language_id, rss_hash, rss_ts, chapter, chapter_title, link, data) \
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             (series_id, lang_id, rss_hash, rss_ts, chapter, chapter_title, link, data),
             commit=True)
+        return self.db.last_insert_rowid
 
     def clean_updates(self, older_than=30):
         ts = datetime.datetime.now() - datetime.timedelta(older_than)
         self.db.query('DELETE FROM updates WHERE DATETIME(rss_ts) < DATETIME(?)',
             (ts.strftime('%Y-%m-%d %H:%M:%S'),))
+        return self.db.changes
 
 class Updater(object):
     PATTERN_DESC = re.compile(
@@ -189,16 +209,14 @@ class Updater(object):
             try:
                 series_id = self.dbm.get_series_id(data['series'])
             except DataNotFound:
-                self.dbm.add_series(data['series'])
-                series_id = self.dbm.get_series_id(data['series'])
+                series_id = self.dbm.add_series(data['series'])
                 noapp_logger.info('Added new series: %s', data['series'])
 
             try:
                 lang_id = self.dbm.get_lang(full_name=data['lang'])['id']
             except DataNotFound:
-                self.dbm.add_lang(short_code=data['lang'].lower()[:3],
+                lang_id = self.dbm.add_lang(short_code=data['lang'].lower()[:3],
                     full_name=data['lang'])
-                lang_id = self.dbm.get_lang(full_name=data['lang'])['id']
 
             entry_hash = self._get_entry_hash(entry)
             if self.dbm.get_update_by_hash(entry_hash) is None:
@@ -312,7 +330,8 @@ if __name__ == '__main__':
         except IndexError:
             older_than = 30
         noapp_logger.info('Removing updates older than %d days...', older_than)
-        get_data_manager().clean_updates(older_than)
+        changes = get_data_manager().clean_updates(older_than)
+        noapp_logger.info('Removed %d updates', changes)
 
     modes = {
         'run': mode_run,
