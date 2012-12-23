@@ -13,27 +13,27 @@
         {% endblock %}
     </head>
     <body>
-        <div class="container">
         {% block body %}
         <div id="header" class="header">
             {% block body_header %}
-            <div class="navbar navbar-inverse navbar-static-top">
+            <div class="navbar navbar-inverse navbar-fixed-top">
                 <div class="navbar-inner">
-                    <span class="brand">Batoto RSS Splitter</span>
-                    <ul class="nav">
-                        <li><a href="{{ url_for('list_langs') }}">Home</a></li>
-                        <li><a href="{{ url_for('about') }}">About</a></li>
-                    </ul>
+                    <div class="container">
+                        <span class="brand">Batoto RSS Splitter</span>
+                        <ul class="nav">
+                            <li><a href="{{ url_for('list_langs') }}">Home</a></li>
+                            <li><a href="{{ url_for('stats') }}">Stats</a></li>
+                            <li><a href="{{ url_for('about') }}">About</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             {% endblock %}
-        </div>
-        <div id="content" class="well">
+        <div id="content" class="container well">
             {% block body_content %}
             {% endblock %}
         </div>
-        <!-- <hr/> -->
-        <div id="footer" class="footer">
+        <div id="footer" class="container footer">
             {% block body_footer %}
             <ul id="credits-list" class="row">
                 <li class="span4 offset2">RSS Updates via <a href="http://www.batoto.net/">Batoto</a></li>

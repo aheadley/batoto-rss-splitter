@@ -97,7 +97,7 @@ class SplitterDataManager(object):
         return self.db.query('SELECT * FROM languages ORDER BY full_name',
             commit=False)
 
-    def get_lang(self, short_code=None, full_name=None):
+    def get_lang(self, short_code=None, full_name=None, id=None):
         query = 'SELECT * FROM languages WHERE %s = ?'
         if short_code is not None:
             query = query % 'short_code'
@@ -105,6 +105,9 @@ class SplitterDataManager(object):
         elif full_name is not None:
             query = query % 'full_name'
             param = full_name
+        elif id is not None:
+            query = query % 'id'
+            param = id
         else:
             raise InvalidQuery()
         result = self.db.query(query, (param,), single_result=True, commit=False)
@@ -112,6 +115,15 @@ class SplitterDataManager(object):
             raise DataNotFound()
         else:
             return result
+
+    def get_lang_most_updated(self):
+        result = self.db.query('SELECT language_id FROM updates GROUP BY language_id \
+                ORDER BY COUNT(language_id) DESC LIMIT 1',
+            single_result=True, commit=False)
+        if result is None:
+            raise DataNotFound()
+        else:
+            return result['language_id']
 
     def get_all_series(self):
         return self.db.query('SELECT * FROM series ORDER BY title',
@@ -132,6 +144,15 @@ class SplitterDataManager(object):
             raise DataNotFound()
         else:
             return result['id']
+
+    def get_series_most_updated(self):
+        result = self.db.query('SELECT series_id FROM updates GROUP BY series_id \
+                ORDER BY COUNT(series_id) DESC LIMIT 1',
+            single_result=True, commit=False)
+        if result is None:
+            raise DataNotFound()
+        else:
+            return result['series_id']
 
     def get_all_updates(self):
         return self.db.query('SELECT * FROM updates ORDER BY DATETIME(rss_ts) DESC',
@@ -268,6 +289,43 @@ def teardown_request(dummy_arg=None):
 @app.route('/about')
 def about():
     return flask.render_template('about.html')
+
+@app.route('/stats')
+def stats():
+    updates = flask.g.db.get_all_updates()
+    stats = [
+        (
+            'Language Count',
+            '# of languages in database',
+            len(flask.g.db.get_all_langs()),
+        ),
+        (
+            'Series Count',
+            '# of series in database',
+            len(flask.g.db.get_all_series()),
+        ),
+        (
+            'Update Count',
+            '# of unique RSS updates in database',
+            len(updates),
+        ),
+        (
+            'Last Update Timestamp',
+            'Time of the most recent update',
+            updates[0]['rss_ts'],
+        ),
+        (
+            'Most Updated Language',
+            'Language with the most updates',
+            flask.g.db.get_lang(id=flask.g.db.get_lang_most_updated())['full_name'],
+        ),
+        (
+            'Most Updated Series',
+            'Series with the most updates',
+            flask.g.db.get_series_title(flask.g.db.get_series_most_updated()),
+        ),
+    ]
+    return flask.render_template('stats.html', stats=stats, recent_updates=updates[:5])
 
 @app.route('/')
 def list_langs():

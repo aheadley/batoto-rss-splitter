@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block head_title %}Stats{% endblock %}
+
+{% block body_content %}
+    <h3>Statistics</h3>
+    <p>General statistics and info from the database</p>
+    <h4>General Stats</h4>
+    <ul>
+        {% for stat_name, stat_desc, stat in stats %}
+            <li title="{{stat_desc}}">{{stat_name}}: {{stat}}</li>
+        {% endfor %}
+    </ul>
+    <h4>Most Recent Updates</h4>
+    <ol>
+        {% for update in recent_updates %}
+        <li><a href="{{ update['link'] }}">
+            {{ g.db.get_series_title(update['series_id']) }} -
+            {{ g.db.get_lang(id=update['language_id'])['full_name'] }} -
+            {{ update['chapter'] }}: {{ update['chapter_title'] }}</a></li>
+        {% endfor %}
+    </ol>
+{% endblock %}

@@ -3,3 +3,7 @@
 #credits-list li {
     list-style-type: none;
 }
+
+body {
+    padding-top: 40px;
+}
