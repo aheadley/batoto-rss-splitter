@@ -11,7 +11,13 @@
             <li title="{{stat_desc}}">{{stat_name}}: {{stat}}</li>
         {% endfor %}
     </ul>
-    <h4>Most Recent Updates</h4>
+    <h4>Most Recently Added Series</h4>
+    <ol>
+        {% for series in recent_series %}
+        <li>{{ series['title'] }}</li>
+        {% endfor %}
+    </ol>
+    <h4>Most Recently Added Updates</h4>
     <ol>
         {% for update in recent_updates %}
         <li><a href="{{ update['link'] }}">

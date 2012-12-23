@@ -327,7 +327,10 @@ def stats():
             flask.g.db.get_series_title(flask.g.db.get_series_most_updated()),
         ),
     ]
-    return flask.render_template('stats.html', stats=stats, recent_updates=updates[:5])
+    return flask.render_template('stats.html', stats=stats,
+        recent_updates=updates[:5],
+        recent_series=sorted(flask.g.db.get_all_series(),
+            key=lambda s: s['id'])[-5:][::-1])
 
 @app.route('/')
 def list_langs():
