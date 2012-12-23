@@ -292,6 +292,8 @@ def about():
 
 @app.route('/stats')
 def stats():
+    # this page will almost certainly break if there are no updates in the db
+    # but i don't care
     updates = flask.g.db.get_all_updates()
     stats = [
         (
