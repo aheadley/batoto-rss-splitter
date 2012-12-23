@@ -312,7 +312,12 @@ def stats():
             len(updates),
         ),
         (
-            'Last Update Timestamp',
+            'First Update Timestamp',
+            'Time of the first update in the database',
+            updates[-1]['rss_ts'],
+        ),
+        (
+            'Most Recent Update Timestamp',
             'Time of the most recent update',
             updates[0]['rss_ts'],
         ),
