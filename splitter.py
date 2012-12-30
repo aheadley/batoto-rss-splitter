@@ -204,7 +204,7 @@ class SplitterDataManager(object):
 class Updater(object):
     PATTERN_DESC = re.compile(
         r'^(?P<series>.*) - (?P<lang>[A-Z][a-z]+) - '
-            '(?P<chapter>(?:Vol\.[\d.]+ )?Ch\.[\d\w.]+(?: \d+)?):? '
+            '(?P<chapter>(?:Vol\.[\d.]+ )?Ch\.[\d\w.-]+(?: \d+)?):? '
             '(?P<chapter_title>.+)$')
 
     def __init__(self):
