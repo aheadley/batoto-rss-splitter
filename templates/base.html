@@ -43,5 +43,13 @@
         </div>
         {% endblock %}
         </div>
+        {% block tracking %}
+        {% if config.get('PIWIK_URL', False) and config.get('PIWIK_SITE_ID', False) %}
+            {% include 'tracking/piwik.html' %}
+        {% endif %}
+        {% if config.get('GOOGLE_TRACKING_CODE', False) %}
+            {% include 'tracking/ga.html' %}
+        {% endif %}
+        {% endblock %}
     </body>
 </html>

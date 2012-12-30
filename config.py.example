@@ -4,3 +4,6 @@ DATABASE = '/tmp/splitter.db'
 DEBUG = False
 SECRET_KEY = 'CHANGE ME'
 BATOTO_FEED_URL = 'http://www.batoto.net/recent_rss'
+#PIWIK_URL = 'http://example.com/piwik/'
+#PIWIK_SITE_ID = '1'
+#GOOGLE_TRACKING_CODE = 'UA-XXXXXXXX-Y'
