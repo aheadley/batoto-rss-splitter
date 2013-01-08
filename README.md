@@ -34,12 +34,16 @@ $ python splitter.py -m fetch-updates
 ~~~~
 
 You should then make the fetch-updates command run as a cronjob so the database
-continues to get new updates. You can then run the Flask app (the default mode),
-it should work via WSGI (haven't actually tested this) or you can just run the
-dev server:
+continues to get new updates. You can then run the Flask app (the default mode):
 ~~~~
 $ python splitter.py
  * Running on http://127.0.0.1:5000/
 ~~~~
 
 Then visit http://localhost:5000/ in your browser.
+
+To run via WSGI, point your webserver at ``splitter.wsgi``, for mod_wsgi/Apache
+that would be something like:
+~~~~
+WSGIScriptAlias / /path/to/splitter.wsgi
+~~~~
