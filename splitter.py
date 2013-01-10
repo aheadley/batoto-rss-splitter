@@ -286,6 +286,19 @@ def teardown_request(dummy_arg=None):
     flask.g.db.close()
     flask.g.db = None
 
+@app.route('/robots.txt')
+def robots():
+    resp = flask.make_response(flask.render_template('robots.txt'))
+    resp.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return resp
+
+@app.route('/sitemap.xml')
+def sitemap():
+    resp = flask.make_response(
+        flask.render_template('sitemap.xml', langs=flask.g.db.get_all_langs()))
+    resp.headers['Content-Type'] = 'application/xml; charset=utf-8'
+    return resp
+
 @app.route('/about')
 def about():
     return flask.render_template('about.html')

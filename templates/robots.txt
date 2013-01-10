@@ -1,0 +1,3 @@
+User-Agent: *
+Disallow:
+Sitemap: {{ url_for('sitemap', _external=True) }}
